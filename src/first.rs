@@ -37,29 +37,58 @@ impl List {
 
     // `push` mutates the list so parameter 'self' is `mut`
     // function `push` adds new node at the begining of the List
+    // SO the main IDEA is:
+    //      so 'self.head' should point to the newly pushed node and the newly pushed node should
+    //      point to element pointed by 'self.head'
     pub fn push(&mut self, data: i32) {
-        // TODO
-        let new_code = Box::new(Node {
+        /*
+            |^^^^^^^^^^^^^^^^^^^^^^^^^|
+            | Node.data = data        |
+            | Node.data = Link::Empty |
+            |.........................|
+                Box::new()
+        */
+        let new_node = Box::new(Node {
             data,
-            // so self.head should point to the newly pushed node and the newly pushed node should
-            // point to the Link::Empty i.e. Null
+            // here 'self.head' is replaced with 'Link::Empty'
+            // and previous value of 'self.head' is returned and assigned to 'next' field
             next: mem::replace(&mut self.head, Link::Empty),
-            // next: Link::Empty,
         });
-        self.head = Link::More(new_code)
+
+        /*
+         *  here 'self.head' is made to point to the newly pushed node
+                                    _                                 _
+                                    |     |^^^^^^^^^^^^^^^^^^^^^^^^^|   |
+            self.head -> Link::More |     | Node.data = data        |   |
+                                    |     | Node.data = Link::Empty |   |
+                                    |     |.........................|   |
+                                    |..                               ..|
+        */
+        self.head = Link::More(new_node)
     }
 
     // `pop` function also mutates the list sof 'self' is `mut`
 
     /*
-       Check if the list is empty.
-       If it's empty, just return None
-       If it's not empty
-       remove the head of the list
-       remove its elem
-       replace the list's head with its next
-       return Some(elem)
+        Check if the list is empty.
+        If it's empty, just return None
+        If it's not empty
+        remove the head of the list
+        remove its elem
+        replace the list's head with its next
+        return Some(elem)
+    */
+    /*
+        MAIN IDEA:
+        ========
+            -> make 'self.head' Link::Empty so that it cannot point to anyone and return the value of 'self.head' using `mem::replace`
+                - NOTE: here returned value will be either `Link::Empty` or `Link::More(Box<Node>)`
 
+            -> if `mem::replace` returns `Link::Empty` then return `Option::None`
+            -> if `mem::replace` returns `Link::More(Box<Node>)` then handle accordingly
+                Hanlding `Link::More(Box<Node>)`
+                        -> self.head = node.next
+                        -> return node.data
     */
     pub fn pop(&mut self) -> Option<i32> {
         match mem::replace(&mut self.head, Link::Empty) {
@@ -74,4 +103,40 @@ impl List {
 
 pub fn first_main() {
     // println!("{:?}", list);
+}
+
+mod test {
+    // making new module requires importing the required module explicitly
+    use super::List;
+    // use crate::first::List;
+    #[test]
+    fn basics_test() {
+        let mut list = List::new();
+
+        // Check empty list behaves right
+        assert_eq!(list.pop(), None);
+
+        // Populate list
+        list.push(1);
+        list.push(2);
+        list.push(3);
+        list.push(5);
+        list.push(7);
+
+        // Check the normal removal
+        assert_eq!(list.pop(), Some(7));
+        assert_eq!(list.pop(), Some(5));
+
+        // Push some more just to make sure nothing's corrupted
+        list.push(42);
+        list.push(43);
+
+        // Check the normal removal
+        assert_eq!(list.pop(), Some(43));
+        assert_eq!(list.pop(), Some(42));
+
+        // Check exhaustion
+        // assert_eq!(list.pop(), Some(1));
+        // assert_eq!(list.pop(), None);
+    }
 }
