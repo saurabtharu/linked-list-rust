@@ -1,23 +1,24 @@
 // AN OK SINGLY-lINKED STACK
 
 use std::mem;
-pub struct List {
-    head: Link,
+// Making generic `List`
+pub struct List<T> {
+    head: Link<T>,
 }
 
-type Link = Option<Box<Node>>;
+type Link<T> = Option<Box<Node<T>>>;
 
-struct Node {
-    data: i32,
-    next: Link,
+struct Node<T> {
+    data: T,
+    next: Link<T>,
 }
 
-impl List {
+impl<T> List<T> {
     pub fn new() -> Self {
         Self { head: Link::None }
     }
 
-    pub fn push(&mut self, data: i32) {
+    pub fn push(&mut self, data: T) {
         let new_node = Box::new(Node {
             data,
             // next: mem::replace(&mut self.head, Link::None),
@@ -26,7 +27,7 @@ impl List {
         self.head = Link::Some(new_node)
     }
 
-    pub fn pop(&mut self) -> Option<i32> {
+    pub fn pop(&mut self) -> Option<T> {
         // match mem::replace(&mut self.head, Link::None) {
         /*
         match self.head.take() {
@@ -44,9 +45,10 @@ impl List {
     }
 }
 
-impl Drop for List {
+impl<T> Drop for List<T> {
     fn drop(&mut self) {
-        let mut cur_link = /*mem::replace(&mut self.head, Link::None);*/ self.head.take();
+        // let mut cur_link = mem::replace(&mut self.head, Link::None);
+        let mut cur_link = self.head.take();
 
         while let Link::Some(mut boxed_node) = cur_link {
             // cur_link = mem::replace(&mut boxed_node.next, Link::None);
