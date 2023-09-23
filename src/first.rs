@@ -1,3 +1,4 @@
+// BAD SINGLY-LINKED STACK
 /*
             LAYOUT is like
         --------------------
