@@ -35,7 +35,7 @@ impl List {
         Self { head: Link::Empty }
     }
 
-    // push `mutates` the list so parameter 'self' is `mut`
+    // `push` mutates the list so parameter 'self' is `mut`
     // function `push` adds new node at the begining of the List
     pub fn push(&mut self, data: i32) {
         // TODO
@@ -47,6 +47,33 @@ impl List {
             // next: Link::Empty,
         });
         self.head = Link::More(new_code)
+    }
+
+    // `pop` function also mutates the list sof 'self' is `mut`
+
+    /*
+       Check if the list is empty.
+       If it's empty, just return None
+       If it's not empty
+       remove the head of the list
+       remove its elem
+       replace the list's head with its next
+       return Some(elem)
+
+    */
+    pub fn pop(&mut self) -> Option<i32> {
+        let result;
+
+        match mem::replace(&mut self.head, Link::Empty) {
+            Link::Empty => {
+                result = None;
+            }
+            Link::More(node) => {
+                result = Some(node.data);
+                self.head = node.next;
+            }
+        };
+        result
     }
 }
 
