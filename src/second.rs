@@ -85,9 +85,9 @@ impl<T> List<T> {
     }
 
     //
-    fn iter<'a>(&'a self) -> Iter<'a, T> {
+    fn iter(&self) -> Iter<T> {
         Iter {
-            next: self.head.as_deref().map(|node| &*node),
+            next: self.head.as_deref(),
         }
     }
 }
