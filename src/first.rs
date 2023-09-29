@@ -118,8 +118,8 @@ pub fn first_main() {
 
 mod test {
     // making new module requires importing the required module explicitly
-    use super::List;
-    // use crate::first::List;
+    // use super::List;
+    use crate::first::List;
     #[test]
     fn basics_test() {
         let mut list = List::new();
